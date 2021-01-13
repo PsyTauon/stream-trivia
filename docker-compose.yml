@@ -1,0 +1,14 @@
+version: "2"
+services:
+  api:
+    build: ./go-api
+    networks:
+      - app-network
+    volumes:
+      - ./go-api/go-api:/srv/go-api
+    ports:
+      - "80:8080"
+
+networks:
+  app-network:
+    driver: bridge
