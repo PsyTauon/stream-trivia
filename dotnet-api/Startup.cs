@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using dotnet_api.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace dotnet_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddControllers();
         }
 
@@ -43,6 +45,12 @@ namespace dotnet_api
             {
                 endpoints.MapControllers();
             });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<TriviaHub>("/hub");
+            });
+
         }
     }
 }
