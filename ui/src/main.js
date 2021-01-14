@@ -1,5 +1,6 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from "vue";
+import App from "./App.vue";
+import TriviaServer from "./plugins/trivia-server";
 import './index.css'
 
-createApp(App).mount('#app')
+createApp(App).use(TriviaServer).mount("#app");
