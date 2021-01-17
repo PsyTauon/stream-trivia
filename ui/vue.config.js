@@ -4,7 +4,7 @@ module.exports = {
     proxy: {
       "^/hub": {
         // SET TO YOUR API PORT
-        target: "http://localhost:49153",
+        target: "http://localhost:49154",
       },
     },
   },

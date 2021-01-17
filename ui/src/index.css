@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .border-brand {
+      @apply border rounded-lg py-2 border-primary-dark ring-2 ring-primary-dark ring-offset-2 ring-offset-primary-light
+  }
+}
