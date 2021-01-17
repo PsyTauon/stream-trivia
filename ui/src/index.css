@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer utilities {
+  .input {
+      @apply border-brand
+  }
+  .button {
+      @apply border-brand bg-primary-dark text-white
+  }
   .border-brand {
       @apply border rounded-lg py-2 border-primary-dark ring-2 ring-primary-dark ring-offset-2 ring-offset-primary-light
   }

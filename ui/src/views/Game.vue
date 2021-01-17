@@ -5,54 +5,26 @@
     <label>{{ gameState }}</label>
     <br />
     <br />
-    <label>{{ me }}</label>
-    <br />
-    <br />
     {{ countDown }}
-
-    <div v-if="me.isHost">
-      YOU ARE HOST
-      <br />
-      <br />
-      <textarea v-model="questionText" placeholder="Question" />
-      <br />
-      <br />
-      <textarea v-model="answer" placeholder="Answer" />
-      <br />
-      <br />
-      <input type="button" @click="sendQuestion()" value="Add Question" />
-
-      <div v-for="player in gameState.players" :key="player.id">
-        <!-- <div v-if="!player.isHost"> -->
-        {{ player.name }}
-        <input
-          type="button"
-          @click="updateScore(1, player.connectionId)"
-          value="RIGHT"
-        />
-        <input
-          type="button"
-          @click="updateScore(-1, player.connectionId)"
-          value="WRONG"
-        />
-        <!-- </div> -->
-      </div>
-    </div>
-    <div v-else>
-      YOU ARE PLAYER
-      <br />
-      <br />
-      <textarea v-model="playerAnswer" placeholder="Answer" />
-      <br />
-      <br />
-      <input type="button" @click="submitAnswer()" value="Submit Answer" />
-    </div>
+    <br />
+    <br />
+    <textarea class="input" v-model="questionText" placeholder="Question" />
+    <br />
+    <br />
+    <textarea class="input" v-model="answer" placeholder="Answer" />
+    <br />
+    <br />
+    <Button class="button" @click="SendQuestion()" title="Add Question" />
   </div>
 </template>
 
 <script>
+import Button from '../components/Button'
 export default {
   name: "Game",
+  components: {
+    Button
+  },
   data: () => ({
     questionText: "",
     gameState: {},

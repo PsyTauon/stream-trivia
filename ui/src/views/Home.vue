@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-primary-light home h-screen dark:bg-black pt-10">
+  <div class="dark:bg-black pt-10">
     <div>
       <div class="font-title capitalize text-5xl text-black">TRIVIA</div>
       <div class="font-subtitle -m-3 text-black">on stream</div>
     </div>
     <div class="p-10">
-      <input class="border-brand text-2xl px-4 py-2" type="text" v-model="playerName" placeholder="Player Name" />
+      <input class="input text-xl px-4 py-2" type="text" v-model="playerName" placeholder="Player Name" />
     </div>
     <div class="flex justify-center space-x-4 mx-4">
       <Button @click="join()" title="Join Game" />
