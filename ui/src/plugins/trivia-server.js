@@ -12,6 +12,9 @@ export default {
       JoinGame(gameId, players) {
         return connection.invoke("JoinGame", gameId, players);
       },
+      CreateGame(gameId, players) {
+        return connection.invoke("CreateGame", gameId, players);
+      },
     };
 
     connection.start();
