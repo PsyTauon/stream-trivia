@@ -29,13 +29,18 @@ export default {
     countDown: 0,
   }),
   gameServer: {
-    RecieveGamestate(gamestate) {
+    RoomEnterred(gamestate) {
       console.log("Game State Recieved");
-      this.gameState = gamestate;
+      if (this.gamestate) {
+        this.gameState.players = gamestate.players;
+      } else {
+        this.gamestate = this.gameState = gamestate;
+      }
     },
     QuestionAdded(gamestate) {
       console.log("Question Adeed");
       this.gameState = gamestate;
+      this.countDown = 10;
       this.countDownTimer();
     },
     SetCountPhase(gamestate) {
@@ -46,7 +51,7 @@ export default {
   created() {
     let urlGameId = this.$route.query.id;
     if (urlGameId) {
-      this.$GameServer.GetGameState(urlGameId);
+      this.$GameServer.EnterRoom(urlGameId);
     } else {
       // TODO ERROR
       //this.$router.push("/");
@@ -59,7 +64,6 @@ export default {
         this.questionText,
         this.answer
       );
-      this.countDown = 10;
     },
     countDownTimer() {
       if (this.countDown > 0) {

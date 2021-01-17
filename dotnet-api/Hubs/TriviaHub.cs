@@ -39,7 +39,7 @@ namespace dotnet_api.Hubs
                 await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
 
                 // Tell the UI that a new player has been added
-                await Clients.Group(gameId.ToString()).SendAsync("JoinedSuccessful", gameId);
+                await Clients.Caller.SendAsync("JoinedSuccessful", gameId);
             }
             else
             {
@@ -65,14 +65,14 @@ namespace dotnet_api.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
             await Clients.Group(gameId.ToString()).SendAsync("JoinedSuccessful", gameId);
         }
-        public async Task GetGameState(string gameId)
+        public async Task EnterRoom(string gameId)
         {
             GameState game = new GameState(gameId);
             game = GameStates.First(z => z.Key == gameId).Value;
             Player player = game.Players.First(p => p.ConnectionId == this.Context.ConnectionId);
             if (player != null)
             {
-                await Clients.Caller.SendAsync("RecieveGamestate", game);
+                await Clients.Group(gameId.ToString()).SendAsync("RoomEnterred", game);
             }
         }
         public async Task AddQuestion(string gameId, string question, string answer)
