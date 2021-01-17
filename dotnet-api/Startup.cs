@@ -50,7 +50,6 @@ namespace dotnet_api
             {
                 endpoints.MapHub<TriviaHub>("/hub");
             });
-
         }
     }
 }

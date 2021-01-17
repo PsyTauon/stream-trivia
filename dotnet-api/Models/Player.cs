@@ -9,6 +9,7 @@ namespace dotnet_api.Models
     {
         public int PlayerId { get; set; }
         public string PlayerName { get; set; }
+        public bool IsHost { get; set; } = false;
         public string ConnectionId { get; set; }
         public int Score { get; set; } = 0;
     }

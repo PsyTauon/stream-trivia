@@ -11,10 +11,21 @@ namespace dotnet_api.Models
 
         public List<Player> Players { get; set; }
 
+        public Question CurrentQuestion { get; set; }
+
+        public Status Status { get; set; } = Status.WAITING_PHASE;
+
         public GameState(string gameid)
         {
             this.GameId = gameid;
             this.Players = new List<Player>();
         }
+    }
+    public enum Status
+    {
+        WAITING_PHASE = 1,
+        QUESTION_PHASE = 2,
+        COUNT_PHASE = 3,
+        GAMEOVER = 4,
     }
 }

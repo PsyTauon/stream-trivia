@@ -15,6 +15,12 @@ export default {
       CreateGame(gameId, players) {
         return connection.invoke("CreateGame", gameId, players);
       },
+      GetGameState(gameId) {
+        return connection.invoke("GetGameState", gameId);
+      },
+      AddQuestion(gameId, questionText, Answer) {
+        return connection.invoke("AddQuestion", gameId, questionText, Answer);
+      },
     };
 
     connection.start();
