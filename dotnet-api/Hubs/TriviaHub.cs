@@ -101,12 +101,12 @@ namespace dotnet_api.Hubs
                 // NOT HOST
             }
         }
-        public async Task UpdatePlayerScore(string gameId, int scoreChange, Player player)
+        public async Task UpdatePlayerScore(string gameId, int scoreChange, string connectionId)
         {
             GameState game = new GameState(gameId);
             game = GameStates.First(z => z.Key == gameId).Value;
 
-            Player playerToUpdate = game.Players.First(p => p.ConnectionId == player.ConnectionId);
+            Player playerToUpdate = game.Players.First(p => p.ConnectionId == connectionId);
             playerToUpdate.Score = playerToUpdate.Score + scoreChange;
 
             await Clients.Group(gameId.ToString()).SendAsync("ScoreUpdated", game);

@@ -25,8 +25,16 @@
       <div v-for="player in gameState.players" :key="player.id">
         <!-- <div v-if="!player.isHost"> -->
         {{ player.name }}
-        <input type="button" @click="updateScore(1, player)" value="RIGHT" />
-        <input type="button" @click="updateScore(-1, player)" value="WRONG" />
+        <input
+          type="button"
+          @click="updateScore(1, player.connectionId)"
+          value="RIGHT"
+        />
+        <input
+          type="button"
+          @click="updateScore(-1, player.connectionId)"
+          value="WRONG"
+        />
         <!-- </div> -->
       </div>
     </div>
@@ -93,11 +101,11 @@ export default {
         }, 1000);
       }
     },
-    updateScore(scoreChange, player) {
+    updateScore(scoreChange, connectionId) {
       this.$GameServer.UpdatePlayerScore(
         this.gameState.id,
         scoreChange,
-        player
+        connectionId
       );
     },
   },

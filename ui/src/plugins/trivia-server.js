@@ -21,12 +21,12 @@ export default {
       AddQuestion(gameId, questionText, answer) {
         return connection.invoke("AddQuestion", gameId, questionText, answer);
       },
-      UpdatePlayerScore(gameId, scoreChange, player) {
+      UpdatePlayerScore(gameId, scoreChange, connectionId) {
         return connection.invoke(
           "UpdatePlayerScore",
           gameId,
           scoreChange,
-          player
+          connectionId
         );
       },
     };
