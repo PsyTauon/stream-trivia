@@ -15,9 +15,9 @@ namespace dotnet_api.Models
 
         public Status Status { get; set; } = Status.WAITING_PHASE;
 
-        public GameState(string gameid)
+        public GameState(string id)
         {
-            this.Id = gameid;
+            this.Id = id;
             this.Players = new List<Player>();
         }
     }

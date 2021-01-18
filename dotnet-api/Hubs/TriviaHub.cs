@@ -88,13 +88,17 @@ namespace dotnet_api.Hubs
                 Question newQuestion = new Question()
                 {
                     QuestionText = question,
-                    Answer = answer
                 };
                 game.CurrentQuestion = newQuestion;
                 game.Status = Status.QUESTION_PHASE;
                 await Clients.Group(gameId.ToString()).SendAsync("QuestionAdded", game);
 
-                Timer t = new Timer(SetCountPhase, gameId, 10000, 10000);
+                TimerData timerData = new TimerData(){
+                    Id = gameId,
+                    Answer = answer
+                };
+
+                Timer t = new Timer(SetCountPhase, timerData, 10000, 10000);
             }
             else
             {
@@ -111,15 +115,16 @@ namespace dotnet_api.Hubs
 
             await Clients.Group(gameId.ToString()).SendAsync("ScoreUpdated", game);
         }
-        private async void SetCountPhase(Object gameid)
+        private async void SetCountPhase(Object timerData)
         {
-            string gameId = gameid.ToString();
-            GameState game = new GameState(gameId);
+            TimerData data = timerData as TimerData;
+            GameState game = new GameState(data.Id);
 
-            game = GameStates.First(z => z.Key == gameId).Value;
+            game = GameStates.First(z => z.Key == data.Id).Value;
+            game.CurrentQuestion.Answer = data.Answer;
             game.Status = Status.COUNT_PHASE;
 
-            await _hubContext.Clients.Group(gameId.ToString()).SendAsync("SetCountPhase", game);
+            await _hubContext.Clients.Group(data.Id).SendAsync("SetCountPhase", game);
             GC.Collect();
         }
     }
