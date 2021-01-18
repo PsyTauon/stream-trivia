@@ -38,7 +38,15 @@
         <!-- </div> -->
       </div>
     </div>
-    <div v-else>YOU ARE PLAYER</div>
+    <div v-else>
+      YOU ARE PLAYER
+      <br />
+      <br />
+      <textarea v-model="playerAnswer" placeholder="Answer" />
+      <br />
+      <br />
+      <input type="button" @click="submitAnswer()" value="Submit Answer" />
+    </div>
   </div>
 </template>
 
@@ -49,6 +57,7 @@ export default {
     questionText: "",
     gameState: {},
     answer: "",
+    playerAnswer: "",
     error: "",
     countDown: 0,
     me: {},
@@ -67,12 +76,16 @@ export default {
     QuestionAdded(gamestate) {
       this.gameState = gamestate;
       this.countDown = 10;
+      this.playerAnswer = "";
       this.countDownTimer();
     },
     SetCountPhase(gamestate) {
       this.gameState = gamestate;
     },
     ScoreUpdated(gamestate) {
+      this.gameState = gamestate;
+    },
+    AnswerAdded(gamestate) {
       this.gameState = gamestate;
     },
   },
@@ -106,6 +119,13 @@ export default {
         this.gameState.id,
         scoreChange,
         connectionId
+      );
+    },
+    submitAnswer() {
+      this.$GameServer.SubmitAnswer(
+        this.gameState.id,
+        this.playerAnswer,
+        this.me.connectionId
       );
     },
   },

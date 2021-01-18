@@ -29,6 +29,9 @@ export default {
           connectionId
         );
       },
+      SubmitAnswer(gameId, answer, connectionId) {
+        return connection.invoke("SubmitAnswer", gameId, answer, connectionId);
+      },
     };
 
     connection.start();

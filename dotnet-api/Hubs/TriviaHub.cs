@@ -18,11 +18,11 @@ namespace dotnet_api.Hubs
 
         // Gamestates can be stored in Mongo but for now we can do it all in memory for testing.
         public static IDictionary<string, GameState> GameStates = new Dictionary<string, GameState>();
+
         public async Task JoinGame(string gameId, string playerName)
         {
-            GameState gameState = new GameState(gameId);
-            gameState = GameStates.First(z => z.Key == gameId).Value;
-            if (gameState != null)
+            GameState game = GameStates.First(z => z.Key == gameId).Value;
+            if (game != null)
             {
                 // Create a new player with the name from the UI and the connection ID from the signalR hub
                 Player player = new Player()
@@ -31,8 +31,8 @@ namespace dotnet_api.Hubs
                     ConnectionId = this.Context.ConnectionId
                 };
 
-                player.Id = gameState.Players.Count;
-                gameState.Players.Add(player);
+                player.Id = game.Players.Count;
+                game.Players.Add(player);
 
 
                 // Add new connected player to the SignalR group of connected players
@@ -46,6 +46,7 @@ namespace dotnet_api.Hubs
                 await Clients.Caller.SendAsync("JoinError", "game not found");
             }
         }
+
         public async Task CreateGame(string gameId, string playerName)
         {
             Player player = new Player()
@@ -65,10 +66,10 @@ namespace dotnet_api.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
             await Clients.Group(gameId.ToString()).SendAsync("JoinedSuccessful", gameId);
         }
+
         public async Task EnterRoom(string gameId)
         {
-            GameState game = new GameState(gameId);
-            game = GameStates.First(z => z.Key == gameId).Value;
+            GameState game = GameStates.First(z => z.Key == gameId).Value;
 
             Player player = game.Players.First(p => p.ConnectionId == this.Context.ConnectionId);
 
@@ -78,10 +79,11 @@ namespace dotnet_api.Hubs
                 await Clients.Caller.SendAsync("SetMe", player);
             }
         }
+
         public async Task AddQuestion(string gameId, string question, string answer)
         {
-            GameState game = new GameState(gameId);
-            game = GameStates.First(z => z.Key == gameId).Value;
+            GameState game = GameStates.First(z => z.Key == gameId).Value;
+
             Player player = game.Players.First(p => p.ConnectionId == this.Context.ConnectionId);
             if (player.IsHost)
             {
@@ -91,9 +93,13 @@ namespace dotnet_api.Hubs
                 };
                 game.CurrentQuestion = newQuestion;
                 game.Status = Status.QUESTION_PHASE;
+
+                game.Players.Select(p => { p.CurrentAnswer = ""; p.AnswerSubmitted = false; return p; }).ToList();
+
                 await Clients.Group(gameId.ToString()).SendAsync("QuestionAdded", game);
 
-                TimerData timerData = new TimerData(){
+                TimerData timerData = new TimerData()
+                {
                     Id = gameId,
                     Answer = answer
                 };
@@ -105,22 +111,34 @@ namespace dotnet_api.Hubs
                 // NOT HOST
             }
         }
+
         public async Task UpdatePlayerScore(string gameId, int scoreChange, string connectionId)
         {
-            GameState game = new GameState(gameId);
-            game = GameStates.First(z => z.Key == gameId).Value;
+            GameState game = GameStates.First(z => z.Key == gameId).Value;
 
             Player playerToUpdate = game.Players.First(p => p.ConnectionId == connectionId);
             playerToUpdate.Score = playerToUpdate.Score + scoreChange;
 
             await Clients.Group(gameId.ToString()).SendAsync("ScoreUpdated", game);
         }
+
+        public async Task SubmitAnswer(string gameId, string answer, string connectionId)
+        {
+            GameState game = new GameState(gameId);
+            game = GameStates.First(z => z.Key == gameId).Value;
+
+            Player playerToUpdate = game.Players.First(p => p.ConnectionId == connectionId);
+            playerToUpdate.AnswerSubmitted = true;
+            playerToUpdate.CurrentAnswer = answer;
+
+            await Clients.Group(gameId.ToString()).SendAsync("AnswerAdded", game);
+        }
+
         private async void SetCountPhase(Object timerData)
         {
             TimerData data = timerData as TimerData;
-            GameState game = new GameState(data.Id);
+            GameState game = GameStates.First(z => z.Key == data.Id).Value;
 
-            game = GameStates.First(z => z.Key == data.Id).Value;
             game.CurrentQuestion.Answer = data.Answer;
             game.Status = Status.COUNT_PHASE;
 
