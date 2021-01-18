@@ -4,12 +4,12 @@
 
 @layer utilities {
   .input {
-      @apply border-brand
+      @apply border-brand p-2 mb-2
   }
   .button {
-      @apply border-brand bg-primary-dark text-white
+      @apply border-brand bg-primary-dark text-white cursor-pointer px-4
   }
   .border-brand {
-      @apply border rounded-lg py-2 border-primary-dark ring-2 ring-primary-dark ring-offset-2 ring-offset-primary-light
+      @apply border my-1 mx-2 rounded-lg py-2 border-primary-dark ring-2 ring-primary-dark ring-offset-2 ring-offset-primary-light
   }
 }
