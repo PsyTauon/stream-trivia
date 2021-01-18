@@ -5,16 +5,32 @@
     <label>{{ gameState }}</label>
     <br />
     <br />
+    <label>{{ me }}</label>
+    <br />
+    <br />
     {{ countDown }}
-    <br />
-    <br />
-    <textarea v-model="questionText" placeholder="Question" />
-    <br />
-    <br />
-    <textarea v-model="answer" placeholder="Answer" />
-    <br />
-    <br />
-    <input type="button" @click="SendQuestion()" value="Add Question" />
+
+    <div v-if="me.isHost">
+      YOU ARE HOST
+      <br />
+      <br />
+      <textarea v-model="questionText" placeholder="Question" />
+      <br />
+      <br />
+      <textarea v-model="answer" placeholder="Answer" />
+      <br />
+      <br />
+      <input type="button" @click="sendQuestion()" value="Add Question" />
+
+      <div v-for="player in gameState.players" :key="player.id">
+        <!-- <div v-if="!player.isHost"> -->
+        {{ player.name }}
+        <input type="button" @click="updateScore(1, player)" value="RIGHT" />
+        <input type="button" @click="updateScore(-1, player)" value="WRONG" />
+        <!-- </div> -->
+      </div>
+    </div>
+    <div v-else>YOU ARE PLAYER</div>
   </div>
 </template>
 
@@ -27,24 +43,28 @@ export default {
     answer: "",
     error: "",
     countDown: 0,
+    me: {},
   }),
   gameServer: {
     RoomEnterred(gamestate) {
-      console.log("Game State Recieved");
       if (this.gamestate) {
         this.gameState.players = gamestate.players;
       } else {
         this.gamestate = this.gameState = gamestate;
       }
     },
+    SetMe(player) {
+      this.me = player;
+    },
     QuestionAdded(gamestate) {
-      console.log("Question Adeed");
       this.gameState = gamestate;
       this.countDown = 10;
       this.countDownTimer();
     },
     SetCountPhase(gamestate) {
-      console.log("COUNT PHASE");
+      this.gameState = gamestate;
+    },
+    ScoreUpdated(gamestate) {
       this.gameState = gamestate;
     },
   },
@@ -58,9 +78,9 @@ export default {
     }
   },
   methods: {
-    SendQuestion() {
+    sendQuestion() {
       this.$GameServer.AddQuestion(
-        this.gameState.gameId,
+        this.gameState.id,
         this.questionText,
         this.answer
       );
@@ -72,6 +92,13 @@ export default {
           this.countDownTimer();
         }, 1000);
       }
+    },
+    updateScore(scoreChange, player) {
+      this.$GameServer.UpdatePlayerScore(
+        this.gameState.id,
+        scoreChange,
+        player
+      );
     },
   },
 };

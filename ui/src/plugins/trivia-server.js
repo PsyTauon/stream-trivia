@@ -18,8 +18,16 @@ export default {
       EnterRoom(gameId) {
         return connection.invoke("EnterRoom", gameId);
       },
-      AddQuestion(gameId, questionText, Answer) {
-        return connection.invoke("AddQuestion", gameId, questionText, Answer);
+      AddQuestion(gameId, questionText, answer) {
+        return connection.invoke("AddQuestion", gameId, questionText, answer);
+      },
+      UpdatePlayerScore(gameId, scoreChange, player) {
+        return connection.invoke(
+          "UpdatePlayerScore",
+          gameId,
+          scoreChange,
+          player
+        );
       },
     };
 

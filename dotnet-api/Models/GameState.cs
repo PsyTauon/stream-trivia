@@ -7,7 +7,7 @@ namespace dotnet_api.Models
 {
     public class GameState
     {
-        public string GameId { get; set; }
+        public string Id { get; set; }
 
         public List<Player> Players { get; set; }
 
@@ -17,7 +17,7 @@ namespace dotnet_api.Models
 
         public GameState(string gameid)
         {
-            this.GameId = gameid;
+            this.Id = gameid;
             this.Players = new List<Player>();
         }
     }

@@ -7,8 +7,8 @@ namespace dotnet_api.Models
 {
     public class Player
     {
-        public int PlayerId { get; set; }
-        public string PlayerName { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public bool IsHost { get; set; } = false;
         public string ConnectionId { get; set; }
         public int Score { get; set; } = 0;

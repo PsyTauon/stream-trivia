@@ -27,11 +27,11 @@ namespace dotnet_api.Hubs
                 // Create a new player with the name from the UI and the connection ID from the signalR hub
                 Player player = new Player()
                 {
-                    PlayerName = playerName,
+                    Name = playerName,
                     ConnectionId = this.Context.ConnectionId
                 };
 
-                player.PlayerId = gameState.Players.Count;
+                player.Id = gameState.Players.Count;
                 gameState.Players.Add(player);
 
 
@@ -50,9 +50,9 @@ namespace dotnet_api.Hubs
         {
             Player player = new Player()
             {
-                PlayerName = playerName,
+                Name = playerName,
                 ConnectionId = this.Context.ConnectionId,
-                PlayerId = 0,
+                Id = 0,
                 IsHost = true
             };
 
@@ -69,10 +69,13 @@ namespace dotnet_api.Hubs
         {
             GameState game = new GameState(gameId);
             game = GameStates.First(z => z.Key == gameId).Value;
+
             Player player = game.Players.First(p => p.ConnectionId == this.Context.ConnectionId);
+
             if (player != null)
             {
                 await Clients.Group(gameId.ToString()).SendAsync("RoomEnterred", game);
+                await Clients.Caller.SendAsync("SetMe", player);
             }
         }
         public async Task AddQuestion(string gameId, string question, string answer)
@@ -95,15 +98,27 @@ namespace dotnet_api.Hubs
             }
             else
             {
-                // BAD
+                // NOT HOST
             }
+        }
+        public async Task UpdatePlayerScore(string gameId, int scoreChange, Player player)
+        {
+            GameState game = new GameState(gameId);
+            game = GameStates.First(z => z.Key == gameId).Value;
+
+            Player playerToUpdate = game.Players.First(p => p.ConnectionId == player.ConnectionId);
+            playerToUpdate.Score = playerToUpdate.Score + scoreChange;
+
+            await Clients.Group(gameId.ToString()).SendAsync("ScoreUpdated", game);
         }
         private async void SetCountPhase(Object gameid)
         {
             string gameId = gameid.ToString();
             GameState game = new GameState(gameId);
+
             game = GameStates.First(z => z.Key == gameId).Value;
             game.Status = Status.COUNT_PHASE;
+
             await _hubContext.Clients.Group(gameId.ToString()).SendAsync("SetCountPhase", game);
             GC.Collect();
         }
