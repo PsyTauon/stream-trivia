@@ -1,22 +1,29 @@
 <template>
-  <div class="dark:bg-black pt-10">
+  <div class="dark:bg-black pt-10 text-center">
     <div>
       <div class="font-title capitalize text-5xl text-black">TRIVIA</div>
       <div class="font-subtitle -m-3 text-black">on stream</div>
     </div>
-    <div class="p-10">
-      <input class="input text-xl px-4 py-2" type="text" v-model="playerName" placeholder="Player Name" />
+    <div class="p-10 flex flex-col items-center space-y-4">
+      <input class="input w-60 text-xl px-4 py-2" type="text" v-model="gameId" placeholder="Game Id" />
+      <input class="input w-60 text-xl px-4 py-2" type="text" v-model="playerName" placeholder="Player Name" />
     </div>
-    <div class="flex justify-center space-x-4 mx-4">
+    <div class="flex flex-col md:flex-row items-center justify-center md:space-x-4 md:space-y-0 space-y-4 mx-4">
       <Button @click="join()" title="Join Game" />
       <Button @click="create()" title="Create Game" />
     </div>
-    <label>{{ error }}</label>
   </div>
 </template>
 
 <script>
 import Button from '../components/Button'
+import toastMe from 'toast-me';
+
+const toast = (message) => toastMe(message, {
+  position: 'bottom',
+  duration: 3000,
+  closeable: false,
+})
 
 export default {
   name: "Home",
@@ -34,6 +41,7 @@ export default {
     },
     JoinError(error) {
       this.error = error;
+      toast(this.error);
     },
   },
   methods: {
@@ -42,6 +50,7 @@ export default {
         this.$GameServer.JoinGame(this.gameId, this.playerName);
       } else {
         this.error = "Game Id and Player Name Required";
+        toast(this.error);
       }
     },
     create() {
@@ -49,6 +58,7 @@ export default {
         this.$GameServer.CreateGame(this.getRandomString(6), this.playerName);
       } else {
         this.error = "Player Name Required";
+        toast(this.error);
       }
     },
     getRandomString(length) {

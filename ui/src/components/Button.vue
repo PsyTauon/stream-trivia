@@ -1,5 +1,5 @@
 <template>
-      <input class="flex-1 max-w-sm button" type="button" v-bind:value="title" />
+      <input class="flex-1 md:inline max-w-sm button w-52" type="button" v-bind:value="title" />
 </template>
 
 <script>
