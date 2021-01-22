@@ -35,7 +35,13 @@ module.exports = {
       },
       borderRadius: {
         '4xl': '2rem',
-      }
+      },
+      gridTemplateColumns: {
+        'game': 'minmax(0, 1fr) minmax(0,3fr)',
+      },
+      boxShadow: {
+        brand: '6px 6px 7px -2px rgba(0,0,0,0.51)'
+      },
     }
   },
   variants: {

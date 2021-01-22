@@ -5,7 +5,7 @@
       <div class="font-subtitle -m-3 text-black">on stream</div>
     </div>
     <div class="p-10 flex flex-col items-center space-y-4">
-      <input class="input w-60 text-xl px-4 py-2" type="text" v-model="gameId" placeholder="Game Id" />
+      <input class="input w-60 text-xl px-4 py-2" type="text" v-model="gameId" placeholder="Game ID" />
       <input class="input w-60 text-xl px-4 py-2" type="text" v-model="playerName" placeholder="Player Name" />
     </div>
     <div class="flex flex-col md:flex-row items-center justify-center md:space-x-4 md:space-y-0 space-y-4 mx-4">
@@ -49,7 +49,7 @@ export default {
       if (this.gameId && this.playerName) {
         this.$GameServer.JoinGame(this.gameId, this.playerName);
       } else {
-        this.error = "Game Id and Player Name Required";
+        this.error = "Game ID and Player Name Required";
         toast(this.error);
       }
     },

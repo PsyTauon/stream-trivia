@@ -1,12 +1,12 @@
 <template>
-    <div class="border rounded-lg h-32 flex flex-col px-4">
-        <div class="flex-1">
+    <div class="shadow-brand border border-brand min-h-32 w-60 flex flex-col">
+        <div class="h-10 bg-primary text-center py-2 text-white rounded-t-lg">
             {{ username }}
         </div>
-        <div class="flex-grow">
+        <div class="flex-grow px-4 pt-2">
             {{ answer }}
         </div>
-        <div class="flex-1 flex">
+        <div class="h-15 flex text-center py-4">
             <i class="full flex-1">❌</i>
             <i class="full flex-1">✔️</i>
         </div>

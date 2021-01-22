@@ -1,46 +1,26 @@
 <template>
-  <div class="flex flex-col md:grid md:grid-cols-2 md:gap-4">
-    <div class="order-3 md:order-none md:col-span-2">
-      {{ countDown }}
-    </div>
-    <div class="order-1 md:order-none">
-      <div>
-        <div class="flex flex-col space-y-4 items-center mb-4">
-          <textarea class="input max-w-xl" v-model="questionText" placeholder="Question" />
-          <textarea class="input max-w-xl" v-model="answer" placeholder="Answer" />
-        </div>
-        <Button class="button" @click="SendQuestion()" title="Add Question" />
-      </div>
-    </div>
-    <div class="order-4 md:order-none md:flex gap-2">
-      <UserAnswer username="Psy" answer="This is an answer" />
-      <UserAnswer username="birdwizard_" answer="Another answer" />
-    </div>
-    <div class="order-3 md:order-none">
-      Player list
-    </div>
-    <div class="order-5 md:order-none">
-      <label>{{ gameState }}</label>
-    </div>
+  <div>
+    <GridGame :countdown=countdown v-if="displayComponent == 'grid'" />
   </div>
 </template>
 
 <script>
-import Button from '../components/Button'
-import UserAnswer from '../components/UserAnswer'
+import GridGame from './game/GridGame'
+
 export default {
   name: "Game",
   components: {
-    Button,
-    UserAnswer
+    GridGame
   },
   data: () => ({
+    flexWidth: 640,
+    displayComponent: 'grid',
     questionText: "",
     gameState: {},
     answer: "",
     playerAnswer: "",
     error: "",
-    countDown: 0,
+    countdown: 0,
     me: {},
   }),
   gameServer: {
@@ -56,9 +36,9 @@ export default {
     },
     QuestionAdded(gamestate) {
       this.gameState = gamestate;
-      this.countDown = 10;
+      this.countdown = 10;
       this.playerAnswer = "";
-      this.countDownTimer();
+      this.countdownTimer();
     },
     SetCountPhase(gamestate) {
       this.gameState = gamestate;
@@ -71,6 +51,12 @@ export default {
     },
   },
   created() {
+    if (window.innerWidth <= this.flexWidth) {
+      this.displayComponent = 'flex'
+    } else {
+      this.displayComponent = 'grid'
+    }
+
     let urlGameId = this.$route.query.id;
     if (urlGameId) {
       this.$GameServer.EnterRoom(urlGameId);
@@ -87,11 +73,11 @@ export default {
         this.answer
       );
     },
-    countDownTimer() {
-      if (this.countDown > 0) {
+    countdownTimer() {
+      if (this.countdown > 0) {
         setTimeout(() => {
-          this.countDown -= 1;
-          this.countDownTimer();
+          this.countdown -= 1;
+          this.countdownTimer();
         }, 1000);
       }
     },
