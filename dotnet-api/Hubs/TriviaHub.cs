@@ -120,6 +120,11 @@ namespace dotnet_api.Hubs
             playerToUpdate.Score = playerToUpdate.Score + scoreChange;
 
             await Clients.Group(gameId.ToString()).SendAsync("ScoreUpdated", game);
+
+            if (playerToUpdate != null)
+            {
+                await Clients.Client(playerToUpdate.ConnectionId).SendAsync("SetMe", playerToUpdate);
+            }
         }
 
         public async Task SubmitAnswer(string gameId, string answer, string connectionId)
