@@ -203,6 +203,9 @@ export default {
         },
         AnswerAdded(gamestate) {
             this.gameState = gamestate;
+        },
+        PlayerLeft(gamestate) {
+            this.gameState = gamestate;
         }
     },
     created() {
@@ -213,6 +216,10 @@ export default {
             // TODO ERROR
             //this.$router.push("/");
         }
+        window.addEventListener("beforeunload", this.handlerClose);
+    },
+    beforeDestroy: function() {
+        this.$GameServer.LeaveRoom(this.gameState.id);
     },
     computed: {
         twitchLink: function() {
@@ -245,6 +252,9 @@ export default {
                 this.playerAnswer,
                 this.me.connectionId
             );
+        },
+        handlerClose: function() {
+            this.$GameServer.LeaveRoom(this.gameState.id);
         }
     }
 };

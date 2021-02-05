@@ -3,7 +3,7 @@ import { HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 export default {
     install(Vue) {
         const connection = new HubConnectionBuilder()
-            .withUrl("/hub")
+            .withUrl("/ws/hub")
             .configureLogging(LogLevel.Information)
             .build();
 
@@ -26,6 +26,9 @@ export default {
             },
             SubmitAnswer(gameId, answer, connectionId) {
                 return connection.invoke("SubmitAnswer", gameId, answer, connectionId);
+            },
+            LeaveRoom(gameId) {
+                return connection.invoke("LeaveRoom", gameId);
             }
         };
 

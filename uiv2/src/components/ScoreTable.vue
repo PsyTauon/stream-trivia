@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="player in players" :key="player.connectionId">
+                <tr v-for="player in players" :key="player.id">
                     <td>{{ player.name }}</td>
                     <td>{{ player.score }}</td>
                 </tr>

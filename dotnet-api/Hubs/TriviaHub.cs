@@ -160,6 +160,7 @@ namespace dotnet_api.Hubs
             await Clients.Group(gameId.ToString()).SendAsync("AnswerAdded", game);
         }
 
+
         private async void SetCountPhase(Object timerData)
         {
             TimerData data = timerData as TimerData;
@@ -170,6 +171,18 @@ namespace dotnet_api.Hubs
 
             await _hubContext.Clients.Group(data.Id).SendAsync("SetCountPhase", game);
             GC.Collect();
+        }
+
+        public async Task LeaveRoom(string gameId)
+        {
+            GameState game = new GameState(gameId);
+            game = GameStates.First(z => z.Key == gameId).Value;
+            
+            int playerToRemove = game.Players.FindIndex(p => p.ConnectionId == Context.ConnectionId);
+            game.Players.RemoveAt(playerToRemove);
+
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameId.ToString());
+            await Clients.Group(gameId.ToString()).SendAsync("PlayerLeft", game);
         }
     }
 }
