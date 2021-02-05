@@ -18,4 +18,6 @@ RUN dotnet publish "dotnet-api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+EXPOSE 5000
 ENTRYPOINT ["dotnet", "dotnet-api.dll"]
