@@ -12,8 +12,8 @@ export default {
             JoinGame(gameId, players) {
                 return connection.invoke("JoinGame", gameId, players);
             },
-            CreateGame(gameId, players) {
-                return connection.invoke("CreateGame", gameId, players);
+            CreateGame(gameId, players, playerCount, twitch) {
+                return connection.invoke("CreateGame", gameId, players, playerCount, twitch);
             },
             EnterRoom(gameId) {
                 return connection.invoke("EnterRoom", gameId);

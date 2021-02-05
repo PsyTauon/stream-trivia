@@ -24,22 +24,29 @@ namespace dotnet_api.Hubs
             GameState game = GameStates.First(z => z.Key == gameId).Value;
             if (game != null)
             {
-                // Create a new player with the name from the UI and the connection ID from the signalR hub
-                Player player = new Player()
+                if (game.Players.Count() - 1 < game.PlayerCount)
                 {
-                    Name = playerName,
-                    ConnectionId = this.Context.ConnectionId
-                };
+                    // Create a new player with the name from the UI and the connection ID from the signalR hub
+                    Player player = new Player()
+                    {
+                        Name = playerName,
+                        ConnectionId = this.Context.ConnectionId
+                    };
 
-                player.Id = game.Players.Count;
-                game.Players.Add(player);
+                    player.Id = game.Players.Count;
+                    game.Players.Add(player);
 
 
-                // Add new connected player to the SignalR group of connected players
-                await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
+                    // Add new connected player to the SignalR group of connected players
+                    await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
 
-                // Tell the UI that a new player has been added
-                await Clients.Caller.SendAsync("JoinedSuccessful", gameId);
+                    // Tell the UI that a new player has been added
+                    await Clients.Caller.SendAsync("JoinedSuccessful", gameId);
+                }
+                else
+                {
+                    await Clients.Caller.SendAsync("JoinError", "Game Full");
+                }
             }
             else
             {
@@ -47,7 +54,7 @@ namespace dotnet_api.Hubs
             }
         }
 
-        public async Task CreateGame(string gameId, string playerName)
+        public async Task CreateGame(string gameId, string playerName, int playerCount, string twitch)
         {
             Player player = new Player()
             {
@@ -60,7 +67,16 @@ namespace dotnet_api.Hubs
             // Create a new gamestate
             GameState gameState = new GameState(gameId);
             gameState.Players.Add(player);
-
+            if(playerCount < 12)
+            {
+                playerCount = 12;
+            }
+            if(playerCount > 128)
+            {
+                playerCount = 128;
+            }
+            gameState.PlayerCount = playerCount;
+            gameState.Twitch = twitch;
             GameStates.Add(gameId, gameState);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, gameId.ToString());
@@ -129,6 +145,11 @@ namespace dotnet_api.Hubs
 
         public async Task SubmitAnswer(string gameId, string answer, string connectionId)
         {
+            if (answer.Length > 30)
+            {
+                answer.Substring(0, 30);
+            }
+
             GameState game = new GameState(gameId);
             game = GameStates.First(z => z.Key == gameId).Value;
 

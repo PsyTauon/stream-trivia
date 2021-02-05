@@ -5,6 +5,9 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import TriviaServer from "./plugins/trivia-server";
 
+import _ from "lodash";
+Vue.prototype._ = _;
+
 Vue.use(TriviaServer);
 
 Vue.config.productionTip = false;

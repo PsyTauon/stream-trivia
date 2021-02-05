@@ -1,5 +1,16 @@
 <template>
     <div>
+        <v-row no-gutters>
+            <v-col cols="12" sm="10"> GameID: {{ gameState.id }}</v-col>
+            <v-col cols="12" sm="12" v-if="gameState.players"
+                >Player Count: {{ gameState.players.length - 1 }} /
+                {{ gameState.playerCount }}</v-col
+            >
+
+            <v-col cols="12" sm="12"> Host: {{ gameState.twitch }}</v-col>
+        </v-row>
+
+        <br />
         <!-- is host -->
         <div v-if="me.isHost">
             <v-row>
@@ -25,7 +36,7 @@
                     <v-divider class="my-7"></v-divider>
 
                     <div>
-                        <ScoreTable :players="gameState.players.slice(1)"></ScoreTable>
+                        <ScoreTable :players="orderedPlayers"></ScoreTable>
                     </div>
                 </v-col>
                 <v-col cols="12" sm="9">
@@ -39,7 +50,13 @@
                             <v-card>
                                 <v-card-title>{{ player.name }}</v-card-title>
                                 <v-card-text>
-                                    <v-textarea :value="player.currentAnswer" filled></v-textarea>
+                                    <v-card class="mx-auto" color="blue-grey lighten-5">
+                                        <v-card-text
+                                            ><h2 style="min-height: 110px;">
+                                                {{ player.currentAnswer }}
+                                            </h2>
+                                        </v-card-text>
+                                    </v-card>
                                 </v-card-text>
 
                                 <v-card-actions>
@@ -69,62 +86,76 @@
         <!-- is player -->
 
         <div v-else>
-            <v-row
-                ><v-col cols="12" sm="12">{{ gameState.status }}</v-col>
-            </v-row>
-            <v-row v-if="gameState.currentQuestion">
-                <v-col cols="12" sm="5">
-                    <v-textarea
-                        v-model="gameState.currentQuestion.questionText"
-                        filled
-                        rows="1"
-                        disabled
-                    ></v-textarea>
+            <v-row>
+                <v-col cols="12" sm="5" class="pb-0">
+                    <v-card class="mx-auto" color="light-blue lighten-5">
+                        <v-card-text class="headline font-weight-bold">
+                            <div v-if="gameState.currentQuestion">
+                                {{ gameState.currentQuestion.questionText }}
+                            </div>
+                        </v-card-text>
+                    </v-card>
                 </v-col>
-                <v-col cols="12" sm="2">
-                    <v-chip class="ma-2" color="dark">
+                <v-col cols="12" sm="2" align="center" justify="center">
+                    <v-chip class="my-5" color="dark">
                         {{ countDown }} seconds
                         <v-icon right>
                             mdi-timer
                         </v-icon>
                     </v-chip>
                 </v-col>
-                <v-col cols="12" sm="5"
-                    ><v-textarea
-                        v-model="gameState.currentQuestion.answer"
-                        filled
-                        rows="1"
-                        disabled
-                    ></v-textarea>
+                <v-col cols="12" sm="5">
+                    <v-card class="mx-auto" color="green lighten-5">
+                        <v-card-text class="headline font-weight-bold">
+                            <div v-if="gameState.currentQuestion">
+                                {{ gameState.currentQuestion.answer }}
+                            </div>
+                        </v-card-text>
+                    </v-card>
                 </v-col>
             </v-row>
 
             <v-row
                 ><v-col cols="12" sm="4">
                     <v-card>
-                        <v-card-title>{{ me.name }}</v-card-title>
-                        <v-card-title>{{ me.score }}</v-card-title>
+                        <v-card-title v-if="gameState.players"
+                            >{{ me.name }}: #{{
+                                _.findIndex(orderedPlayers, { connectionId: me.connectionId }) + 1
+                            }}
+                            / {{ gameState.players.length - 1 }}
+                        </v-card-title>
                         <v-card-text>
-                            <v-textarea v-model="playerAnswer" filled></v-textarea>
+                            <p>Score: {{ me.score }}</p>
+                            <v-textarea
+                                v-model="playerAnswer"
+                                clearable
+                                filled
+                                no-resize
+                                counter="30"
+                                maxlength="30"
+                                rows="5"
+                                :disabled="gameState.status == 2 ? false : true"
+                            ></v-textarea>
                         </v-card-text>
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="primary" depressed @click="submitAnswer()">
+                            <v-btn
+                                color="primary"
+                                depressed
+                                @click="submitAnswer()"
+                                :disabled="gameState.status == 2 ? false : true"
+                            >
                                 Submit Answer
                             </v-btn></v-card-actions
                         >
                     </v-card>
                 </v-col>
                 <v-col cols="12" sm="4">
-                    <iframe
-                        src="https://www.twitch.tv/embed/birdwizard_/chat?parent=localhost"
-                        height="500px"
-                        width="100%"
-                    ></iframe>
+                    <iframe :src="twitchLink" height="500px" width="100%"></iframe>
                 </v-col>
                 <v-col cols="12" sm="4" v-if="gameState.players"
-                    ><ScoreTable :players="gameState.players.slice(1)"></ScoreTable>
+                    ><ScoreTable :players="orderedPlayers"></ScoreTable>
                 </v-col>
             </v-row>
         </div>
@@ -181,6 +212,16 @@ export default {
         } else {
             // TODO ERROR
             //this.$router.push("/");
+        }
+    },
+    computed: {
+        twitchLink: function() {
+            return (
+                "https://www.twitch.tv/embed/" + this.gameState.twitch + "/chat?parent=localhost"
+            );
+        },
+        orderedPlayers: function() {
+            return _.orderBy(this.gameState.players.slice(1), "score", ["desc"]);
         }
     },
     methods: {

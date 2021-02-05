@@ -36,7 +36,18 @@
                             v-model="playerNameCreate"
                             label="Player Name"
                             outlined
-                        ></v-text-field
+                        ></v-text-field>
+                        <v-text-field
+                            v-model="twitch"
+                            label="Twitch Useranem (Eg. birdwizard_)"
+                            outlined
+                        ></v-text-field>
+                        <v-select
+                            :items="playerCounts"
+                            v-model="playerCount"
+                            filled
+                            label="Player Count"
+                        ></v-select
                     ></v-card-text>
 
                     <v-card-actions>
@@ -60,7 +71,10 @@ export default {
         gameId: "",
         playerNameJoin: "",
         playerNameCreate: "",
-        error: ""
+        error: "",
+        twitch: "birdwizard_",
+        playerCount: 12,
+        playerCounts: [12, 24, 36, 48, 64, 128]
     }),
     gameServer: {
         JoinedSuccessful(gameId) {
@@ -82,7 +96,12 @@ export default {
         create() {
             this.error = "";
             if (this.playerNameCreate) {
-                this.$GameServer.CreateGame(this.getRandomString(6), this.playerNameCreate);
+                this.$GameServer.CreateGame(
+                    this.getRandomString(6),
+                    this.playerNameCreate,
+                    this.playerCount,
+                    this.twitch
+                );
             } else {
                 this.error = "Player Name Required";
             }

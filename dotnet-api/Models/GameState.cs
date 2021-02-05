@@ -13,6 +13,10 @@ namespace dotnet_api.Models
 
         public Question CurrentQuestion { get; set; }
 
+        public int PlayerCount { get; set; } = 12;
+
+        public string Twitch { get; set; }
+
         public Status Status { get; set; } = Status.WAITING_PHASE;
 
         public GameState(string id)
